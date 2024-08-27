@@ -75,7 +75,7 @@
     <RefactorLog Include="Demo_ADO.ScriptSQL.refactorlog" />
   </ItemGroup>
   <ItemGroup>
-    <PostDeploy Include="Data\InitialData.PostDeployment.sql" />
+    <None Include="Data\InitialData.PostDeployment.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Demo_ADO.ScriptSQL.publish.xml" />
