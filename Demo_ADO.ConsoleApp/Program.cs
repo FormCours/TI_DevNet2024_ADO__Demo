@@ -74,14 +74,14 @@ Console.WriteLine();
                     // → Attention, l'ordre des colonnes ne doit pas être modifié !!!
                     string firstname1 = reader.GetString(0);
                     string lastname1 = (string)reader[1];
-                    DateTime birtdate1 = Convert.ToDateTime(reader[2]);
+                    DateTime? birtdate1 = reader[2] == DBNull.Value ? null : Convert.ToDateTime(reader[2]);
 
                     // Lecture via le nom de la colonne des resultats
                     string firstname2 = reader.GetString(reader.GetOrdinal("Firstname"));
                     string lastname2 = (string)reader["Lastname"];
-                    DateTime birtdate2 = Convert.ToDateTime(reader["BirthDate"]);
+                    DateTime? birtdate2 = reader[2] is DBNull ? null : Convert.ToDateTime(reader["BirthDate"]);
 
-                    Console.WriteLine($" - {firstname2} {lastname2} ({birtdate2.ToShortDateString()})");
+                    Console.WriteLine($" - {firstname2} {lastname2} ({birtdate2?.ToShortDateString()})");
                 }
             }
 
