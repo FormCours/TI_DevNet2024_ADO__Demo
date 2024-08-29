@@ -5,7 +5,7 @@ using System.Data;
 // Package NuGet : Microsoft.Data.SqlClient
 
 
-const string connectionString = @"Data Source=DESKTOP-QLR948L;Initial Catalog=DemoADO_Book;Trusted_Connection=True;Trust Server Certificate=True";
+const string connectionString = @"Data Source=TFNSDOT0500A;Initial Catalog=Demo_ADO;Trusted_Connection=True;Trust Server Certificate=True";
 
 // Demo 01 - Connection à la DB
 // ****************************
@@ -90,3 +90,57 @@ Console.WriteLine();
         }
     }
 }
+Console.WriteLine();
+
+
+// Demo 03 - Modifer des données sur la DB (Mode connecté)
+// *******************************************************
+
+
+// - Ajouter un nouveau Genre (Avec un faille de securité (╯°□°）╯︵ ┻━┻)
+/*
+using (SqlConnection connection = new SqlConnection(connectionString))
+{
+    Console.Write("Ajouter un nouveau genre : \n>");
+    string genreToAdd = Console.ReadLine()!;
+
+
+    using (SqlCommand command = connection.CreateCommand())
+    {
+        command.CommandType = CommandType.Text;
+        command.CommandText = $"INSERT INTO [Genre](Name) VALUES ('{genreToAdd}')";
+        // Faille de securité -> Injection SQL
+        // - Valeur Ok : Sport
+        // - Injection : test'); DELETE FROM [Author_Book]; --
+            
+        connection.Open();
+        int nbRowAdd = command.ExecuteNonQuery();
+        connection.Close();
+
+        Console.WriteLine($"Nombre de ligne ajouter : {nbRowAdd}");
+    }
+}
+*/
+
+
+// - Ajouter un nouveau Genre (Sans un faille de securité ^_^)
+using (SqlConnection connection = new SqlConnection(connectionString))
+{
+    Console.Write("Ajouter un nouveau genre : \n>");
+    string genreToAdd = Console.ReadLine()!;
+
+    using (SqlCommand command = connection.CreateCommand())
+    {
+        command.CommandType = CommandType.Text;
+        command.CommandText = $"INSERT INTO [Genre](Name) VALUES (@GenreName)";
+
+        command.Parameters.AddWithValue("@GenreName", genreToAdd);
+
+        connection.Open();
+        int nbRowAdd = command.ExecuteNonQuery();
+        connection.Close();
+
+        Console.WriteLine($"Nombre de ligne ajouter : {nbRowAdd}");
+    }
+}
+
