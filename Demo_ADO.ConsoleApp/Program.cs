@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Demo_ADO.ConsoleApp.Models;
+using Microsoft.Data.SqlClient;
 using System.Data;
 
 // Avant de commencer → Installer le bibliotheque ADO pour le type de server ciblé !
@@ -141,6 +142,41 @@ using (SqlConnection connection = new SqlConnection(connectionString))
         connection.Close();
 
         Console.WriteLine($"Nombre de ligne ajouter : {nbRowAdd}");
+    }
+}
+
+
+
+// Demo 04 - Utilisation de la version abstract
+// ********************************************
+List<Genre> genres = new List<Genre>();
+using(IDbConnection connection = new SqlConnection(connectionString))
+{
+    string search = "Sciences";
+
+    using (IDbCommand cmd = connection.CreateCommand())
+    {
+        cmd.CommandText = "SELECT * FROM Genre WHERE CONTAINS(Name, @Search)";  
+
+        IDbDataParameter paramSearch = cmd.CreateParameter();
+        paramSearch.ParameterName = "Search";
+        paramSearch.Value = search;
+        cmd.Parameters.Add(paramSearch);
+
+        connection.Open();
+        using (IDataReader reader = cmd.ExecuteReader())
+        {
+            while (reader.Read())
+            {
+                Genre genre = new Genre()
+                {
+                    Id = (int)reader["GenreId"],
+                    Name = reader["Name"] is DBNull ? null : (string)reader["Name"]
+                };
+                genres.Add(genre);
+            }
+        }
+        connection.Close();
     }
 }
 
